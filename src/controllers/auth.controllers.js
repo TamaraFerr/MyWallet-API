@@ -24,7 +24,7 @@ export async function login(req, res) {
 
     try{
         const usuario = await db.collection("usuarios").findOne({email})
-        if(!usuario) return res.status(401).send("E-mail não existe.")
+        if(!usuario) return res.status(404).send("E-mail não existe.")
 
         const senhaCorreta = bcrypt.compareSync(password, usuario.password)
         if(!senhaCorreta) return res.status(401).send("Senha incorreta.")
@@ -39,14 +39,9 @@ export async function login(req, res) {
 }
 
 export async function logout(req, res) {
-    const {authorization} = req.headers
-    const token = authorization?.replace("Bearer", "")
-    if(!token) return res.sendStatus(401)
+    const token = res.locals.sessao.token
 
     try{
-        const sessoes = await db.collection("sessoes").findOne({token})
-        if(!sessoes) return res.sendStatus(401)
-
         await db.collection("sessoes").deleteOne({token})
         res.sendStatus(200)
     } catch (err){
