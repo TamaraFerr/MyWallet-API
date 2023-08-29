@@ -15,6 +15,7 @@ export async function cadastro(req, res) {
         res.sendStatus(201)
 
     } catch (err){
+        console.log(err)
         res.status(500).send(err.message)
     }
 }
